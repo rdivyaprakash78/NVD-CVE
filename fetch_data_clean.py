@@ -163,15 +163,12 @@ def periodic_task():
     fetch_data()  # Fetch and insert data into MongoDB
     print("Finished fetching CVE data.")
 
-"""
+
 # Schedule periodic execution every hour
-schedule.every(10).seconds.do(periodic_task)
+schedule.every(6).hour.do(periodic_task)
 
 # Keep the script running to handle scheduled tasks
 while True:
     schedule.run_pending()
     time.sleep(60)  # Sleep for 1 minute before checking again
 
-    """
-
-fetch_data()  # Fetch and insert data into MongoDB when the script is run directly
