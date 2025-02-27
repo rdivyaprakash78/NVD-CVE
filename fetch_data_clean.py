@@ -5,8 +5,12 @@ import schedule
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 from db import cves
+import os
+from dotenv import load_dotenv
 
-URL = "https://services.nvd.nist.gov/rest/json/cves/2.0"
+load_dotenv()
+
+URL = str(os.environ.get('url'))
 MAX_ITEMS_PER_REQUEST = 2000
 
 def insert_into_db(formatted_data):
@@ -118,7 +122,7 @@ def format_response_and_insert_to_db(data):
     return None
 
 def make_request(offset, limit):
-    URL = f"https://services.nvd.nist.gov/rest/json/cves/2.0?startIndex={offset}&resultsPerPage={limit}"
+    URL = str(os.environ.get('url_with_params'))
     
     try:
         response = requests.get(URL)
