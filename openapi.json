@@ -1,0 +1,342 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "FastAPI",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/cve/list": {
+      "get": {
+        "summary": "Get Home",
+        "operationId": "get_home_cve_list_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cves": {
+      "get": {
+        "summary": "Get Records",
+        "description": "Fetch CVE records from the database with filters for CVE ID, year, CVE score, and modification date.\n\n- **limit**: Number of records to return (default 10).\n- **skip**: Number of records to skip (default 0).\n- **cve_id**: Optional filter by CVE ID (e.g., `CVE-2021-34527`)\n- **year**: Optional filter by publication year (4 digits YYYY format).\n- **cve_score**: Optional filter by CVE score (minimum value).\n- **last_modified_days**: Optional filter for records modified within the last N days. (int(days))\n\nReturns:\n    - `records`: A list of matching CVE records.\n    - `totalCount`: Total number of records that match the filters.\n\nPossible Errors:\n    - `404 Not Found`: No records found.\n    - `500 Internal Server Error`: Database error.",
+        "operationId": "get_records_cves_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "The number of records to return, must be at least 1.",
+              "default": 10,
+              "title": "Limit"
+            },
+            "description": "The number of records to return, must be at least 1."
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "The number of records to skip for pagination, must be 0 or more.",
+              "default": 0,
+              "title": "Skip"
+            },
+            "description": "The number of records to skip for pagination, must be 0 or more."
+          },
+          {
+            "name": "cve_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                }
+              ],
+              "title": "Cve Id"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                }
+              ],
+              "title": "Year"
+            }
+          },
+          {
+            "name": "cve_score",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                }
+              ],
+              "title": "Cve Score"
+            }
+          },
+          {
+            "name": "last_modified_days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                }
+              ],
+              "title": "Last Modified Days"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/show-cve-details": {
+      "get": {
+        "summary": "Show Details",
+        "operationId": "show_details_show_cve_details_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cve-details": {
+      "get": {
+        "summary": "Get Cve Details",
+        "description": "Fetch CVE details from the database based on the CVE ID.\n\nThis endpoint retrieves detailed information about a specific CVE \n(Common Vulnerability and Exposure) based on the provided CVE ID.\n\n**Query Parameters:**\n- `id` (str): The CVE ID for which the details are to be fetched (e.g., `CVE-2021-34527`).\n\n**Response Model (`CveDetails`):**\nThe response will contain detailed information about the CVE, including:\n- `cve_id`: The unique CVE identifier (e.g., `CVE-2021-34527`).\n- `description`: Description of the vulnerability.\n- `severity`: The severity level of the CVE (e.g., \"HIGH\", \"LOW\").\n- `score`: The CVE’s base score (Score out of 10).\n- `vector_string`: The attack vector string (e.g., \"AV:L/AC:L/Au:N/C:C/I:C/A:C\").\n- `access_vector`: The access vector for the vulnerability.(eg., \"LOCAL)\n- `access_complexity`: The complexity of exploitation.\n- `authentication`: Whether authentication is required to exploit the vulnerability.\n- `confidentiality_impact`: The impact on confidentiality (e.g., \"HIGH\").\n- `integrity_impact`: The impact on integrity.\n- `availability_impact`: The impact on availability.\n- `exploitability_score`: The exploitability score of the CVE.\n- `impact_score`: The impact score of the CVE.\n- `cpe`: A list of Common Platform Enumerations (CPE) related to the CVE.\n\n**Error Handling:**\n- `404 Not Found`: If the CVE ID does not exist in the database.\n- `500 Internal Server Error`: If an error occurs while processing the request.\n\n**Example Request:**\n```bash\nGET /cve-details?id=CVE-2021-34527\n```\n\n**Example Response:**\n```json\n{\n    \"cve_id\": \"CVE-2021-34527\",\n    \"description\": \"Windows Print Spooler Remote Code Execution Vulnerability\",\n    \"severity\": \"Critical\",\n    \"score\": 8.8,\n    \"vector_string\": \"NETWORK\",\n    \"access_vector\": \"Network\",\n    \"access_complexity\": \"Low\",\n    \"authentication\": \"None\",\n    \"confidentiality_impact\": \"High\",\n    \"integrity_impact\": \"High\",\n    \"availability_impact\": \"High\",\n    \"exploitability_score\": 10.0,\n    \"impact_score\": 10.0,\n    \"cpe\": [\n        {\n            \"cpe_name\": \"cpe:/o:microsoft:windows_10:1909\",\n            \"version_start_including\": \"10.0\",\n            \"version_end_excluding\": \"10.1\"\n        }\n    ]\n}\n```\n\n**Possible Errors:**\n- `404 Not Found`: The requested CVE ID does not exist in the database.\n- `500 Internal Server Error`: An internal server error occurred while processing the request.",
+        "operationId": "get_cve_details_cve_details_get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CveDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Cpe": {
+        "properties": {
+          "vulnerable": {
+            "type": "boolean",
+            "title": "Vulnerable"
+          },
+          "criteria": {
+            "type": "string",
+            "title": "Criteria"
+          },
+          "matchCriteriaId": {
+            "type": "string",
+            "title": "Matchcriteriaid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "vulnerable",
+          "criteria",
+          "matchCriteriaId"
+        ],
+        "title": "Cpe"
+      },
+      "CveDetails": {
+        "properties": {
+          "cve_id": {
+            "type": "string",
+            "title": "Cve Id"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "severity": {
+            "type": "string",
+            "title": "Severity"
+          },
+          "score": {
+            "type": "number",
+            "title": "Score"
+          },
+          "vector_string": {
+            "type": "string",
+            "title": "Vector String"
+          },
+          "access_vector": {
+            "type": "string",
+            "title": "Access Vector"
+          },
+          "access_complexity": {
+            "type": "string",
+            "title": "Access Complexity"
+          },
+          "authentication": {
+            "type": "string",
+            "title": "Authentication"
+          },
+          "confidentiality_impact": {
+            "type": "string",
+            "title": "Confidentiality Impact"
+          },
+          "integrity_impact": {
+            "type": "string",
+            "title": "Integrity Impact"
+          },
+          "availability_impact": {
+            "type": "string",
+            "title": "Availability Impact"
+          },
+          "exploitability_score": {
+            "type": "number",
+            "title": "Exploitability Score"
+          },
+          "impact_score": {
+            "type": "number",
+            "title": "Impact Score"
+          },
+          "cpe": {
+            "items": {
+              "$ref": "#/components/schemas/Cpe"
+            },
+            "type": "array",
+            "title": "Cpe"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cve_id",
+          "description",
+          "severity",
+          "score",
+          "vector_string",
+          "access_vector",
+          "access_complexity",
+          "authentication",
+          "confidentiality_impact",
+          "integrity_impact",
+          "availability_impact",
+          "exploitability_score",
+          "impact_score",
+          "cpe"
+        ],
+        "title": "CveDetails"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
