@@ -14,6 +14,9 @@ URL = str(os.environ.get('url'))
 MAX_ITEMS_PER_REQUEST = 2000
 
 def insert_into_db(formatted_data):
+
+    "Function to insert data into database"
+
     cve_id = formatted_data.get("CVE ID", None)
 
     if cve_id:
@@ -26,6 +29,7 @@ def insert_into_db(formatted_data):
             cves.insert_one(formatted_data)
 
 def format_response_and_insert_to_db(data):
+
     """This function takes the raw response from the API and converts it
     into a suitable format for the application"""
     
@@ -77,44 +81,26 @@ def format_response_and_insert_to_db(data):
             if node_list:
                 cpe_rows = node_list[0].get("cpeMatch", [])
 
-        cve_id = cve_id if 'cve_id' in locals() else None
-        identifier = identifier if 'identifier' in locals() else None
-        published_date = published_date if 'published_date' in locals() else None
-        last_modified_date = last_modified_date if 'last_modified_date' in locals() else None
-        status = status if 'status' in locals() else None
-        description = description if 'description' in locals() else None
-        severity = severity if 'severity' in locals() else None
-        score = score if 'score' in locals() else None
-        vector_string = vector_string if 'vector_string' in locals() else None
-        access_vector = access_vector if 'access_vector' in locals() else None
-        access_complexity = access_complexity if 'access_complexity' in locals() else None
-        authentication = authentication if 'authentication' in locals() else None
-        confidentiality_impact = confidentiality_impact if 'confidentiality_impact' in locals() else None
-        integrity_impact = integrity_impact if 'integrity_impact' in locals() else None
-        availability_impact = availability_impact if 'availability_impact' in locals() else None
-        impact_score = impact_score if 'impact_score' in locals() else None
-        exploitability_score = exploitability_score if 'exploitability_score' in locals() else None
-        cpe_rows = cpe_rows if 'cpe_rows' in locals() else None
         
         formatted_data = {
-            "CVE ID": cve_id,
-            "Identifier": identifier,
-            "Published Date": published_date,
-            "Last Modified Date": last_modified_date,
-            "Status": status,
-            "Description": description,
-            "Severity": severity,
-            "Score": score,
-            "Vector String": vector_string,
-            "Access Vector": access_vector,
-            "Access Complexity": access_complexity,
-            "Authentication": authentication,
-            "Confidentiality Impact": confidentiality_impact,
-            "Integrity Impact": integrity_impact,
-            "Availability Impact": availability_impact,
-            "Impact Score": impact_score,
-            "Exploitability Score": exploitability_score,
-            "CPE": cpe_rows
+            "CVE ID": cve_id if 'cve_id' in locals() else None,
+            "Identifier": identifier if 'identifier' in locals() else None,
+            "Published Date": published_date if 'published_date' in locals() else None,
+            "Last Modified Date": last_modified_date if 'last_modified_date' in locals() else None,
+            "Status": status if 'status' in locals() else None,
+            "Description":  description if 'description' in locals() else None,
+            "Severity": severity if 'severity' in locals() else None,
+            "Score": score if 'score' in locals() else None,
+            "Vector String": vector_string if 'vector_string' in locals() else None,
+            "Access Vector": access_vector if 'access_vector' in locals() else None,
+            "Access Complexity": access_complexity if 'access_complexity' in locals() else None,
+            "Authentication": authentication if 'authentication' in locals() else None,
+            "Confidentiality Impact":  confidentiality_impact if 'confidentiality_impact' in locals() else None,
+            "Integrity Impact": integrity_impact if 'integrity_impact' in locals() else None,
+            "Availability Impact": availability_impact if 'availability_impact' in locals() else None,
+            "Impact Score": impact_score if 'impact_score' in locals() else None,
+            "Exploitability Score": exploitability_score if 'exploitability_score' in locals() else None,
+            "CPE": cpe_rows if 'cpe_rows' in locals() else None
         }
         
         insert_into_db(formatted_data)
@@ -122,6 +108,9 @@ def format_response_and_insert_to_db(data):
     return None
 
 def make_request(offset, limit):
+
+    """Function to make request to nvd.nist url"""
+
     URL = str(os.environ.get('url_with_params'))
     
     try:
@@ -141,6 +130,9 @@ def make_request(offset, limit):
     return None  # Return None if there was an error
 
 def fetch_data():
+
+    """Fetch data from the server based on params"""
+
     total_results = None 
     offset = 0
     limit = 2000
@@ -160,19 +152,20 @@ def fetch_data():
     
     return None
 
-
-# Periodic fetch task using schedule
 def periodic_task():
+
+    """Periodic function to perform recursive fetch every 6 hours"""
+
     print("Fetching new CVE data...")
-    fetch_data()  # Fetch and insert data into MongoDB
+    fetch_data()
     print("Finished fetching CVE data.")
 
-
-# Schedule periodic execution every hour
 schedule.every(6).hour.do(periodic_task)
 
-# Keep the script running to handle scheduled tasks
 while True:
+
+    """Fetching data from server recursively."""
+
     schedule.run_pending()
-    time.sleep(60)  # Sleep for 1 minute before checking again
+    time.sleep(60)
 

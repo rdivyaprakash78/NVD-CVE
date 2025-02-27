@@ -9,32 +9,36 @@ from datetime import datetime, timedelta, timezone
 from models import Cpe, CveDetails
 import logging
 
-# Initialize FastAPI app
+
 app = FastAPI()
 
-# Setup logging
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Template and static files
+
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 def format_date(date_str: Optional[str]) -> str:
+
     """Convert date from ISO format ('YYYY-MM-DDTHH:MM:SS.sss') to 'dd - mmm - YYYY'."""
+
     if not date_str:
         return "N/A"
     try:
         date_obj = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%f")
-        return date_obj.strftime("%d - %b - %Y")  # Example: 01 - Jan - 2024
+        return date_obj.strftime("%d - %b - %Y") 
     except ValueError:
-        return date_str  # Return original if parsing fails
+        return date_str  
 
 
 def serialize_record(record: dict) -> dict:
+
     """Convert MongoDB document to a JSON serializable format."""
-    record["_id"] = str(record["_id"])  # Convert ObjectId to string
+
+    record["_id"] = str(record["_id"])  
 
     return {
         "CVE ID": record.get("CVE ID", "N/A"),
@@ -48,6 +52,9 @@ def serialize_record(record: dict) -> dict:
 
 @app.get("/cve/list")
 async def get_home(request: Request):
+
+    """Home page which returns paginated response from DB"""
+
     records = cves.count_documents({})
     return templates.TemplateResponse("home.html", {"request": request, "records": records})
 
@@ -85,10 +92,9 @@ async def get_records(
         query["CVE ID"] = {"$regex": cve_id, "$options": "i"}
 
     if year:
-        # Extract first 4 characters from "Publish Date" and compare it to the provided year
         query["$expr"] = {
             "$eq": [
-                {"$toInt": {"$substr": ["$Published Date", 0, 4]}},  # Convert first 4 characters to integer
+                {"$toInt": {"$substr": ["$Published Date", 0, 4]}}, 
                 year
             ]
         }
@@ -97,14 +103,8 @@ async def get_records(
         query["Score"] = {"$gte": cve_score}
 
     if last_modified_days:
-        # Calculate the threshold date (current date - N days)
         threshold_date = datetime.now(timezone.utc) - timedelta(days=last_modified_days)
-        
-        # Format threshold date to "YYYY-MM-DD" string (ignore time)
         threshold_date_str = threshold_date.strftime("%Y-%m-%d")
-        print(f"Threshold Date (YYYY-MM-DD): {threshold_date_str}")  # Debugging
-
-        # Match records where "Last Modified Date" is greater than or equal to the threshold date
         query["Last Modified Date"] = {"$gte": threshold_date_str}
 
     try:
@@ -123,6 +123,9 @@ async def get_records(
 
 @app.get("/show-cve-details")
 async def show_details(request: Request):
+
+    """Show the CVE details page."""
+
     return templates.TemplateResponse("cveDetails.html", {"request": request})
 
 

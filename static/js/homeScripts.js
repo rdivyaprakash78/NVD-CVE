@@ -58,7 +58,7 @@ function renderRecords(records) {
     // Set the onclick event on the row
     row.setAttribute(
       "onclick",
-      `window.location.href='/show-details?id=${record["CVE ID"]}'`
+      `window.location.href='/show-cve-details?id=${record["CVE ID"]}'`
     );
 
     // Add data cells to the row
