@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CVE Records</title>
+    <link rel="stylesheet" href="/static/css/homestyles.css" />
+  </head>
+  <body>
+    <h2>CVE Records</h2>
+
+    <!-- Filters -->
+    <label for="limit">Records per Page:</label>
+    <select id="limit" onchange="fetchRecords()">
+      <option value="10">10</option>
+      <option value="20">20</option>
+      <option value="50">50</option>
+    </select>
+
+    <input type="text" id="cve_id" placeholder="Filter by CVE ID" />
+    <input type="number" id="year" placeholder="Year" />
+    <input type="number" id="cve_score" placeholder="Min CVE Score" />
+    <input
+      type="number"
+      id="last_modified_days"
+      placeholder="Modified in Last N Days"
+    />
+    <button onclick="fetchRecords()">Apply Filters</button>
+    <br /><br />
+    <p><strong>Total number of Records : {{records}}</strong></p>
+
+    <!-- Table to display data -->
+    <table border="1">
+      <thead>
+        <tr>
+          <th>CVE ID</th>
+          <th>Identifier</th>
+          <th>Year</th>
+          <th>Score</th>
+          <th>Last Modified</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="records-table"></tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <button onclick="prevPage()">Previous</button>
+    <span id="page-info">Page 1</span>
+    <button onclick="nextPage()">Next</button>
+
+    <script src="/static/js/homeScripts.js"></script>
+  </body>
+</html>

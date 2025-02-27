@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title id="cve-title">CVE Details</title>
+    <link rel="stylesheet" href="/static/css/detailsStyles.css" />
+  </head>
+  <body>
+    <!-- CVE Details Section -->
+    <h1 id="cve-id">CVE Details</h1>
+
+    <section>
+      <h2>Description</h2>
+      <p id="description">Loading description...</p>
+    </section>
+
+    <section>
+      <h2>CVSS V2 Metrics</h2>
+      <p><strong>Severity:</strong> <span id="severity">Loading...</span></p>
+      <p><strong>Score:</strong> <span id="score">Loading...</span></p>
+      <p>
+        <strong>Vector String:</strong>
+        <span id="vector-string">Loading...</span>
+      </p>
+
+      <h3>Impact Metrics</h3>
+      <table id="impact-metrics-table">
+        <thead>
+          <tr>
+            <th>Access Vector</th>
+            <th>Access Complexity</th>
+            <th>Authentication</th>
+            <th>Confidentiality Impact</th>
+            <th>Integrity Impact</th>
+            <th>Availability Impact</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="access-vector">Loading...</td>
+            <td id="access-complexity">Loading...</td>
+            <td id="authentication">Loading...</td>
+            <td id="confidentiality-impact">Loading...</td>
+            <td id="integrity-impact">Loading...</td>
+            <td id="availability-impact">Loading...</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Score</h2>
+      <p>
+        <strong>Exploitability Score:</strong>
+        <span id="exploitability-score">Loading...</span>
+      </p>
+      <p>
+        <strong>Impact Score:</strong> <span id="impact-score">Loading...</span>
+      </p>
+    </section>
+
+    <section>
+      <h2>CPE</h2>
+      <table id="cpe-table">
+        <thead>
+          <tr>
+            <th>Criteria</th>
+            <th>Match Criteria ID</th>
+            <th>Vulnerable</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Rows will be dynamically added -->
+        </tbody>
+      </table>
+    </section>
+
+    <script src="/static/js/showDetails.js"></script>
+  </body>
+</html>

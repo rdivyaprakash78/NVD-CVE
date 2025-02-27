@@ -1,0 +1,9 @@
+requests
+pandas
+schedule
+pymongo
+fastapi
+uvicorn
+jinja2
+pytest
+httpx
